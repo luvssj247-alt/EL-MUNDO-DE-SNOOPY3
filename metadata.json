@@ -1,0 +1,6 @@
+{
+  "name": "El Mundo De Snoopy",
+  "description": "Juego 2D acogedor y de exploración en el mundo de Peanuts con Ari, físicas cuidadas, NPCs con rutinas vivas, conversaciones con IA y cuaderno infinito.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
