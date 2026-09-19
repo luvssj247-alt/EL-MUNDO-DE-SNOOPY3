@@ -21,6 +21,10 @@ export async function askNPC(
       ? `Ha hablado recientemente de: ${memory.recentTopics.join(', ')}.`
       : '';
 
+    const memoryContext = memoryManager.getMemoryContext(npcId);
+    const gossip = memoryManager.getGossipForNpc(npcId).slice(0, 3).join(' • ');
+    const relationshipSummary = memoryManager.getRelationshipSummary(npcId);
+
     const weatherSpanish = {
       sunny: 'soleado y despejado',
       cloudy: 'nublado con brisa suave',
@@ -36,6 +40,9 @@ export async function askNPC(
         message,
         history,
         memorySummary,
+        memoryContext,
+        gossip,
+        relationshipSummary,
         location,
         timeOfDay,
         weather: weatherSpanish,
@@ -54,9 +61,11 @@ export async function askNPC(
     return data;
   } catch (err) {
     console.warn('API chat fallback engaged', err);
-    // Instant friendly character response
+    const context = memoryManager.getMemoryContext(npcId);
+    const gossip = memoryManager.getGossipForNpc(npcId).slice(0, 2).join(' • ');
+    const reply = getClientFallbackReply(npcId, message, context, gossip);
     return {
-      reply: getClientFallbackReply(npcId, message),
+      reply,
       memoryNote: `Charla sincera con Ari.`,
     };
   }
@@ -98,26 +107,36 @@ export async function askNPCToExamineWriting(
   }
 }
 
-function getClientFallbackReply(npcId: NPCId, message: string): string {
+function getClientFallbackReply(
+  npcId: NPCId,
+  message: string,
+  memoryContext: string,
+  gossip: string
+): string {
+  const memoryHint = memoryContext ? `\n\n(Recuerda: ${memoryContext})` : '';
+  const gossipHint = gossip ? `\n\n(Chisme reciente: ${gossip})` : '';
+
   switch (npcId) {
     case 'snoopy':
-      return '*(Snoopy sonríe ampliamente, teclea unas frases en su máquina de escribir imaginaria y asiente con sus orejas)*';
+      return `*(Snoopy sonríe ampliamente, teclea unas frases en su máquina de escribir imaginaria y asiente con sus orejas)*${memoryHint}${gossipHint}`;
     case 'woodstock':
-      return "|||'''! *¡Pip-piip!* (Woodstock vuela en pequeños círculos amarillos y asiente con entusiasmo).";
+      return `|||'''! *¡Pip-piip!* (Woodstock vuela en pequeños círculos amarillos y asiente con entusiasmo).${memoryHint}${gossipHint}`;
     case 'charlie_brown':
-      return '¡Cielos santos, Ari! Es verdad... charlar contigo aquí me da mucha tranquilidad. Me alegra que estés en el vecindario.';
+      return `¡Cielos santos, Ari! Es verdad... charlar contigo aquí me da mucha tranquilidad. Me alegra que estés en el vecindario.${memoryHint}${gossipHint}`;
     case 'lucy':
-      return 'Bien dicho, Ari. La mayoría de la gente duda demasiado, pero tú tienes determinación. ¡Sigue así!';
+      return `Bien dicho, Ari. La mayoría de la gente duda demasiado, pero tú tienes determinación. ¡Sigue así!${memoryHint}${gossipHint}`;
     case 'linus':
-      return 'Es una hermosa reflexión, Ari. Como suelo decir, el mundo necesita más paciencia sincera y comprensión.';
+      return `Es una hermosa reflexión, Ari. Como suelo decir, el mundo necesita más paciencia sincera y comprensión.${memoryHint}${gossipHint}`;
     case 'sally':
-      return '¡Tienes toda la razón, Ari! Si todo el mundo pensara como nosotras, el colegio sería mucho más divertido.';
+      return `¡Tienes toda la razón, Ari! Si todo el mundo pensara como nosotras, el colegio sería mucho más divertido.${memoryHint}${gossipHint}`;
     case 'schroeder':
-      return 'Tus palabras tienen una armonía muy agradable, Ari. Acompáñame a escuchar esta sonata.';
+      return `Tus palabras tienen una armonía muy agradable, Ari. Acompáñame a escuchar esta sonata.${memoryHint}${gossipHint}`;
     case 'peppermint_patty':
-      return '¡Así se habla, Ari! ¡Con esa actitud positiva vamos a ganar el próximo campeonato!';
+      return `¡Así se habla, Ari! ¡Con esa actitud positiva vamos a ganar el próximo campeonato!${memoryHint}${gossipHint}`;
     case 'marcie':
-      return 'Es un honor compartir este momento con usted, Ari. Su presencia siempre ilumina el día.';
+      return `Es un honor compartir este momento con usted, Ari. Su presencia siempre ilumina el día.${memoryHint}${gossipHint}`;
+    default:
+      return `Es un placer hablar contigo, Ari.${memoryHint}${gossipHint}`;
   }
 }
 
@@ -145,5 +164,14 @@ function getClientFallbackReaction(
       return `Una obra sumamente evocadora y bien elaborada, Ari. Gracias por confiar en mí para leerla.`;
     case 'sally':
       return `¡Qué bonito, Ari! Ojalá Linus me escribiera cosas tan dulces como "${title}".`;
+    default:
+      return `Me gusta mucho esto que escribiste, Ari.`;
   }
+}
+
+export function buildDialogueMemoryPrompt(npcId: NPCId): string {
+  const memoryContext = memoryManager.getMemoryContext(npcId);
+  const gossip = memoryManager.getGossipForNpc(npcId).slice(0, 3).join(' • ');
+
+  return `Contexto social del barrio para ${npcId}: ${memoryContext} Rumores recientes: ${gossip}`;
 }
