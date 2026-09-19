@@ -8,6 +8,20 @@ export type TimeOfDay = 'morning' | 'afternoon' | 'sunset' | 'night';
 
 export type WeatherType = 'sunny' | 'cloudy' | 'rainy' | 'windy';
 
+export type MemoryCertainty = 'high' | 'medium' | 'low';
+
+export type EmotionalState =
+  | 'happy'
+  | 'calm'
+  | 'nervous'
+  | 'excited'
+  | 'sad'
+  | 'frustrated'
+  | 'curious'
+  | 'flirty'
+  | 'protective'
+  | 'focused';
+
 export interface WeatherState {
   type: WeatherType;
   puddleIntensity: number; // 0 to 1
@@ -53,6 +67,54 @@ export type NPCId =
   | 'schroeder'
   | 'peppermint_patty'
   | 'marcie';
+
+export type RelationshipKind =
+  | 'family'
+  | 'friend'
+  | 'rival'
+  | 'romantic'
+  | 'admiration'
+  | 'trusted'
+  | 'conflict';
+
+export interface NPCRelationship {
+  targetId: NPCId;
+  kind: RelationshipKind;
+  strength: number; // 0-100
+  note: string;
+}
+
+export interface NPCMemoryEntry {
+  id: string;
+  npcId: NPCId;
+  summary: string;
+  timestamp: number;
+  certainty: MemoryCertainty;
+  tags: string[];
+  sourceNpc?: NPCId | 'ari' | 'unknown';
+}
+
+export interface WorldMemoryEvent {
+  id: string;
+  type:
+    | 'conversation'
+    | 'visit'
+    | 'gesture'
+    | 'discovery'
+    | 'conflict'
+    | 'gift'
+    | 'sport'
+    | 'music'
+    | 'weather'
+    | 'routine';
+  actors: Array<NPCId | 'ari'>;
+  location: string;
+  summary: string;
+  timestamp: number;
+  importance: number;
+  isPublic: boolean;
+  sourceNpc?: NPCId | 'ari' | 'unknown';
+}
 
 export interface NPCState {
   id: NPCId;
@@ -171,4 +233,8 @@ export interface CharacterMemory {
     timestamp: number;
   }[];
   memorableQuotes: string[];
+  memories?: NPCMemoryEntry[];
+  gossip?: string[];
+  currentMood?: EmotionalState;
+  relationships?: NPCRelationship[];
 }
