@@ -4,30 +4,21 @@
   .pixelated { image-rendering: pixelated; image-rendering: crisp-edges; }
 }
 
-:root {
-  color-scheme: dark;
-  font-family: 'Nunito', ui-sans-serif, system-ui, sans-serif;
-  background: #080b14;
-}
-
+:root { color-scheme: dark; font-family: 'Nunito', ui-sans-serif, system-ui, sans-serif; background: #080b14; }
 * { box-sizing: border-box; }
 button, input, textarea { font: inherit; }
 button { -webkit-tap-highlight-color: transparent; }
+#game-canvas { image-rendering: pixelated; image-rendering: crisp-edges; }
 
-#game-canvas { image-rendering: auto; }
+/* RPG presentation: clean edges, layered depth and consistent overlays. */
+.rpg-panel { background: linear-gradient(145deg, rgba(15,23,42,.92), rgba(30,41,59,.82)); border: 1px solid rgba(251,191,36,.35); box-shadow: 0 12px 35px rgba(0,0,0,.3); }
+.rpg-action { transition: transform .12s ease, filter .12s ease; }
+.rpg-action:hover { filter: brightness(1.08); }
+.rpg-action:active { transform: translateY(1px) scale(.96); }
 
 ::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: rgba(245, 235, 215, 0.5); }
+::-webkit-scrollbar-track { background: rgba(245,235,215,.5); }
 ::-webkit-scrollbar-thumb { background: #d4a373; border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: #bc6c25; }
-
-.paper-texture {
-  background-color: #fdfbf7;
-  background-image: radial-gradient(#e6dfd3 0.75px, transparent 0.75px);
-  background-size: 12px 12px;
-}
-
-.notebook-lines {
-  background-image: repeating-linear-gradient(transparent, transparent 27px, #e2d9cc 28px);
-  line-height: 28px;
-}
+.paper-texture { background-color: #fdfbf7; background-image: radial-gradient(#e6dfd3 .75px, transparent .75px); background-size: 12px 12px; }
+.notebook-lines { background-image: repeating-linear-gradient(transparent, transparent 27px, #e2d9cc 28px); line-height: 28px; }
